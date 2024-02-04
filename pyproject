@@ -30,8 +30,12 @@ shift $((OPTIND - 1))
 
 # Loop through remaining arguments
 for arg in "$@"; do
-  echo "Creating a directory called: $arg"
-  echo "Creating main.py file..."
+  cd ~/Desktop/PythonProjects
+  # echo "Creating a directory called: $arg"
+  mkdir $arg
+  cd $arg
+  # echo "Creating main.py file..."
+  touch main.py
   
   if $git_repo; then
     echo "Initializing git repository..."
