@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Default values for options
+git_repo=false
+venv=false
+github_repo=false
+
+# Process options
+
+while getopts "gvh" opt; do
+  case $opt in
+    g)
+      git_repo=true
+      ;;
+    v)
+      venv=true
+      ;;
+    h)
+      github_repo=true
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+  esac
+done
+
+# Shift the options so that $1 refers to the first argument
+shift $((OPTIND - 1))
+
+# Loop through remaining arguments
+for arg in "$@"; do
+  echo "Creating a directory called: $arg"
+  echo "Creating main.py file..."
+  
+  if $git_repo; then
+    echo "Initializing git repository..."
+  fi
+
+  if $venv; then
+    echo "Creating Python virtual environment..."
+  fi
+
+  if $github_repo; then
+    echo "Creating repository on GitHub..."
+  fi
+done
