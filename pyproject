@@ -1,11 +1,9 @@
 #!/bin/bash
 
-# Default values for options
+
+valid_options=true
 git_repo=false
 venv=false
-github_repo=false
-
-# Process options
 
 while getopts "gvh" opt; do
   case $opt in
@@ -15,37 +13,51 @@ while getopts "gvh" opt; do
     v)
       venv=true
       ;;
-    h)
-      github_repo=true
-      ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
-      exit 1
+      valid_options=false
       ;;
   esac
 done
 
-# Shift the options so that $1 refers to the first argument
-shift $((OPTIND - 1))
 
-# Loop through remaining arguments
-for arg in "$@"; do
-  cd ~/Desktop/PythonProjects
-  # echo "Creating a directory called: $arg"
-  mkdir $arg
-  cd $arg
-  # echo "Creating main.py file..."
-  touch main.py
+if $valid_options; then
   
-  if $git_repo; then
-    echo "Initializing git repository..."
-  fi
+  shift $((OPTIND - 1))
 
-  if $venv; then
-    echo "Creating Python virtual environment..."
-  fi
+  function create_git_repo() {
+    git init
+    touch .gitignore
+  }
 
-  if $github_repo; then
-    echo "Creating repository on GitHub..."
-  fi
-done
+  function git_add_commit() {
+    git add .
+    git commit -m "Initial commit"
+  }
+
+  function create_venv() {
+    python3 -m venv venv
+  }
+
+  for arg in "$@"; do
+    cd ~/Desktop/PythonProjects
+    mkdir $arg
+    cd $arg
+    touch main.py
+    
+    if $venv; then
+      echo "Creating Python virtual environment..."
+      create_venv
+    fi
+
+    if $git_repo; then
+      echo "Initializing git repository..."
+      create_git_repo
+      if $venv; then
+        echo "venv/" >> .gitignore
+      fi
+      git_add_commit
+    fi
+    
+  done
+fi
